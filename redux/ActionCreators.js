@@ -70,7 +70,7 @@ export const addDishes = (dishes) => ({
 });
 
 export const fetchPromos = () => (dispatch) => {
-    dispatch(promossLoading());
+    dispatch(promosLoading());
 
     return fetch(baseUrl + 'promotions')
         .then(response => {
