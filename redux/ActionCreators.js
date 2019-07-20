@@ -89,7 +89,7 @@ export const fetchPromos = () => (dispatch) => {
         })
         .then(response => response.json())
         .then(promos => dispatch(addPromos(promos)))
-        .catch(error => dispatch(dishesFailed(error.message)));
+        .catch(error => dispatch(promosFailed(error.message)));
 };
 
 export const promosLoading = () => ({
