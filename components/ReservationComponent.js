@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, SafeAreaView } from 'react-native';
 import { Card } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 
@@ -105,7 +105,7 @@ class Reservation extends Component {
                     onDismiss={() => {this.toggleModal(); this.resetForm()}}
                     onRequestClose={() => {this.toggleModal(); this.resetForm()}}
                     >
-                    <View style={styles.modal}>
+                    <SafeAreaView style={styles.modal}>
                         <Text style={styles.modalTitle}>Your Reservation</Text>
                         <Text style={styles.modalText}>Number of Guests: {this.state.guests}</Text>
                         <Text style={styles.modalText}>Smoking?: {this.state.smoking ? 'Yes' : 'No'}</Text>
@@ -115,7 +115,7 @@ class Reservation extends Component {
                             color='#512DA8'
                             title='Close'
                             />
-                    </View>
+                    </SafeAreaView>
                 </Modal>
             </ScrollView>
         );

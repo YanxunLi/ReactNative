@@ -20,7 +20,7 @@ const mapDispatchToProps = dispatch => ({
     fetchDishes: () => dispatch(fetchDishes()),
     fetchComments: () => dispatch(fetchComments()),
     fetchPromos: () => dispatch(fetchPromos()),
-    fetchLeaders: () => dispatch(fetchLeaders()),
+    fetchLeaders: () => dispatch(fetchLeaders())
 });
 
 const MenuNavigator = createStackNavigator({
@@ -119,7 +119,7 @@ const ReservationNavigator = createStackNavigator({
 
 const CustomDrawerContentComponent = (props) => (
     <ScrollView>
-        <SafeAreaView style={StyleSheet.container}
+        <SafeAreaView style={styles.container}
             forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={styles.drawerHeader}>
                 <View style={{flex: 1}}>

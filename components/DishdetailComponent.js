@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Text, View, ScrollView, FlatList, Modal, SafeAreaView, Button } from 'react-native';
+import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -14,7 +14,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-    postFavorite: (dishId) => dispatch(postFavorite(dishId))
+    postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+    postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment))
 });
 
 function RenderDish(props) {
@@ -29,14 +30,24 @@ function RenderDish(props) {
                 <Text style={{margin: 10}}>
                     {dish.description}
                 </Text>
-                <Icon
-                    raised
-                    reverse
-                    name={ props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
-                    />
+                <View style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row'}}>
+                    <Icon
+                        raised
+                        reverse
+                        name={props.favorite ? 'heart' : 'heart-o'}
+                        type='font-awesome'
+                        color='#f50'
+                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
+                        />
+                    <Icon
+                        raised
+                        reverse
+                        name={'pencil'}
+                        type='font-awesome'
+                        color='#512DA8'
+                        onPress={() => props.toggleModal()}
+                        />
+                </View>
             </Card>
         );
     }
@@ -52,7 +63,12 @@ function RenderComments(props) {
         return (
             <View key={index} style={{margin: 10}}>
                 <Text style={{fontSize: 14}}>{item.comment}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Rating
+                    imageSize={12}
+                    readonly
+                    startingValue={item.rating}
+                    style={{ alignItems: 'flex-start' }}
+                    />
                 <Text style={{fontSize: 12}}>{'-- ' + item.author + ', ' + item.date}</Text>
             </View>
         );
@@ -71,8 +87,29 @@ function RenderComments(props) {
 
 class Dishdetail extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            rating: 5,
+            author: '',
+            comment: '',
+            showModal: false
+        }
+    }
+
     markFavorite(dishId) {
         this.props.postFavorite(dishId);
+    }
+
+    toggleModal() {
+        this.setState({ showModal: !this.state.showModal });
+    }
+
+    handleComment() {
+        const dishId = this.props.navigation.getParam('dishId', '');
+
+        this.toggleModal();
+        this.props.postComment(dishId, this.state.rating, this.state.author, this.state.comment);
     }
 
     static navigationOptions = {
@@ -87,8 +124,57 @@ class Dishdetail extends Component {
                 <RenderDish dish={this.props.dishes.dishes[+dishId]}
                     favorite={this.props.favorites.some(el => el === dishId)}
                     onPress={() => this.markFavorite(dishId)}
+                    toggleModal={() => this.toggleModal()}
                     />
                 <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
+                <Modal
+                    animationType={'slide'}
+                    transparent={false}
+                    visible={this.state.showModal}
+                    onRequestClose={() => {this.toggleModal()}}
+                    >
+                    <SafeAreaView>
+                        <Rating 
+                            showRating
+                            startingValue={5}
+                            onFinishRating={(rating) => this.setState({ rating: rating })}
+                            />
+                        <Input
+                            id='author'
+                            placeholder='Author'
+                            leftIcon={
+                                <Icon
+                                    name='user'
+                                    type='font-awesome'
+                                    size={24}
+                                />
+                            }
+                            onChangeText={(author) => this.setState({ author: author })}
+                        />
+                        <Input
+                            id='comment'  
+                            placeholder='Comment'
+                            leftIcon={
+                                <Icon
+                                    name='comment'
+                                    type='font-awesome'
+                                    size={24}
+                                />
+                            }
+                            onChangeText={(comment) => this.setState({ comment: comment })}
+                        />
+                        <Button 
+                            onPress={() => this.handleComment()}
+                            color='#512DA8'
+                            title='Submit'
+                            />
+                        <Button 
+                            onPress={() => this.toggleModal()}
+                            color='grey'
+                            title='Cancel'
+                            />
+                    </SafeAreaView>
+                </Modal>
             </ScrollView>
         );
     }
