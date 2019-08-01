@@ -21,10 +21,14 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
     "ios": {
+      "bundleIdentifier": "net.food.confusion.confusion",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "net.food.confusion.confusion"
     }
   }
 }
